@@ -4,9 +4,9 @@ import time
 import os
 
 #Initializare Firebase
-cred = credentials.Certificate('home/maurice/retropie-iot-firebase-adminsdk-fbsvc-b8ac8afda4.json')
+cred = credentials.Certificate('/home/maurice/retropie-iot-firebase-adminsdk-fbsvc-b8ac8afda4.json')
 firebase_admin.initialize_app(cred)
-db = firebase_client()
+db = firestore.client()
 
 #Functie care proceseaza comezile
 def on_snapshot(col_snapshot, changes, read_time):
