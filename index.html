@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>RetroPie IoT Dashboard</title>
+    <style>
+        body { front-family: sans-serif; padding: 20px; background: #f5f5f5; }
+        h1 { color: #333; }
+        .session { background: #fff; padding: 10px; margin: 10px 0; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>🎮 RetroPie IoT - Sesiuni de joc</h1>
+    <div id="sessions"></div>
+    
+    <script src="config.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore-compat.js"></script>
+    <script>
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    db.collection("games_sessions").orderBy("start_time", "desc").get().then(snapshot => {
+      const container = document.getElementById("sessions");
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const div = document.createElement("div");
+        div.className = "session";
+        div.innerHTML = `
+          <strong>${data.game}</strong> [${data.platform}]<br>
+          🕒 ${data.duration}<br>
+          📅 ${new Date(data.start_time).toLocaleString()}
+        `;
+        container.appendChild(div);
+
+    });
+});
+</script>
+
+</body>
+
+</html>
