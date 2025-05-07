@@ -62,12 +62,18 @@
 
     function formatDuration(durationStr) {
     // Ex: "0:25:12.177306"
-    const parts = durationStr.split(':');
-    const hours = parseInt(parts[0]);
-    const minutes = parseInt(parts[1]);
-    const totalMinutes = (hours * 60) + minutes;
-    return `${totalMinutes} min`;
-    }
+      const parts = durationStr.split(':');
+      const hours = parseInt(parts[0]);
+      const minutes = parseInt(parts[1]);
+      
+      let result = '';
+      if (hours > 0) result += `${hours} ${hours === 1 ? 'ora' : 'ore'}`;
+      if (minutes > 0 || hours === 0) {
+        if (result) result += ' si ';
+        result += `${minutes} ${minutes === 1 ? 'minut' : 'minute'}`;
+      }
+      return result;
+  }
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();

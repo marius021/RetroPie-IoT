@@ -6,6 +6,7 @@ from firebase_admin import credentials, firestore
 from datetime import datetime
 import urllib.parse
 
+
 # 🔐 Inițializare Firebase
 cred = credentials.Certificate("/home/maurice/retropie-iot-firebase-adminsdk-fbsvc-b8ac8afda4.json")
 firebase_admin.initialize_app(cred)
