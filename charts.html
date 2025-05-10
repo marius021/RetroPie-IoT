@@ -1,70 +1,141 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>Retropie IoT - Statistics</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore-compat.js"></script>
-    <script src="config.js"></script>
-    <style>
-        body { font-family: sans-serif; background: #f7f7f7; padding: 20px; }
-        h1 { margin-bottom: 40px; }
-        canvas { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);}
-    </style>
+  <meta charset="UTF-8">
+  <title>Retropie IoT - Statistici</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore-compat.js"></script>
+  <script src="config.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f7f7f7;
+      padding: 30px;
+      margin: 0;
+    }
+
+    h1 {
+      margin-bottom: 40px;
+    }
+
+    h2 {
+      margin-top: 60px;
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+
+    canvas {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      margin-bottom: 40px;
+    }
+  </style>
 </head>
 <body>
-    <h1>📊 Statistici RetroPie</h1>
-    <canvas id="topGamesChart" width="600" height="400"></canvas>
+  <h1>📊 Statistici RetroPie</h1>
 
-    <script>
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+  <h2>🏆 Top 5 jocuri după timp total</h2>
+  <canvas id="topGamesChart" width="600" height="400"></canvas>
 
-        async function getTopGames() {
-            const sessions = await db.collection("games_sessions").get();
-            const durations = {};
-        
-        sessions.forEach(doc => {
-            const data = doc.data();
-            const parts = data.duration.split(":"); //HH:MM:SS
-            const minutes = parseInt(parts[0]) * 60 + parseInt(parts[1]);
+  <h2>📆 Activitate zilnică (timp jucat în minute)</h2>
+  <canvas id="dailyChart" width="600" height="300"></canvas>
 
-            if (!durations[data.game]) durations[data.game] = 0;
-            durations[data.game] += minutes;
-        });
+  <script>
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-        // se sorteaza primele 5 cele mai jucate jocuri
-        const topGames = Object.entries(durations)
+    async function getTopGames() {
+      const sessions = await db.collection("games_sessions").get();
+      const durations = {};
+
+      sessions.forEach(doc => {
+        const data = doc.data();
+        const parts = data.duration.split(":"); // HH:MM:SS
+        const minutes = parseInt(parts[0]) * 60 + parseInt(parts[1]);
+
+        if (!durations[data.game]) durations[data.game] = 0;
+        durations[data.game] += minutes;
+      });
+
+      const topGames = Object.entries(durations)
         .sort((a, b) => b[1] - a[1])
         .slice(0, 5);
 
-        const labels = topGames.map(([game]) => game);
-        const values = topGames.map(([_, mins]) => mins);
+      const labels = topGames.map(([game]) => game);
+      const values = topGames.map(([_, mins]) => mins);
 
-        new Chart(document.getElementById("topGamesChart"), {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: "Timp total (minute)",
-                    data: values,
-                    borderWidth: 1
-            }]
+      new Chart(document.getElementById("topGamesChart"), {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: "Timp total (minute)",
+            data: values,
+            backgroundColor: '#4285f4',
+            borderRadius: 6
+          }]
         },
         options: {
-            responsive: true,
-            plugins: {
-                legend: { display: false },
-                title: {
-                    display: true,
-                    text: "Top 5 jocuri dupa timp total"
-                }
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+            title: {
+              display: true,
+              text: "Top 5 jocuri după timp total"
             }
+          }
         }
-    });
-}
+      });
+    }
+
+    async function getDailyActivity() {
+      const sessions = await db.collection("games_sessions").get();
+      const dailyTotals = {};
+
+      sessions.forEach(doc => {
+        const data = doc.data();
+        const date = new Date(data.start_time).toISOString().split('T')[0]; // YYYY-MM-DD
+
+        const parts = data.duration.split(":");
+        const minutes = parseInt(parts[0]) * 60 + parseInt(parts[1]);
+
+        if (!dailyTotals[date]) dailyTotals[date] = 0;
+        dailyTotals[date] += minutes;
+      });
+
+      const sortedDates = Object.keys(dailyTotals).sort();
+      const values = sortedDates.map(date => dailyTotals[date]);
+
+      new Chart(document.getElementById("dailyChart"), {
+        type: 'line',
+        data: {
+          labels: sortedDates,
+          datasets: [{
+            label: "Minute jucate",
+            data: values,
+            fill: false,
+            borderColor: 'green',
+            backgroundColor: 'green',
+            tension: 0.2
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Activitate zilnică'
+            }
+          }
+        }
+      });
+    }
+
     getTopGames();
-    </script>
+    getDailyActivity();
+  </script>
 </body>
 </html>
