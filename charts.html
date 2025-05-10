@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Retropie IoT - Statistici</title>
+  <title>RetroPie IoT - Statistici</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore-compat.js"></script>
@@ -64,7 +64,8 @@
         .sort((a, b) => b[1] - a[1])
         .slice(0, 5);
 
-      const labels = topGames.map(([game]) => game);
+      const labels = topGames.map((_, index) => `Joc ${index + 1}`);
+      const fullLabels = topGames.map(([game]) => game);
       const values = topGames.map(([_, mins]) => mins);
 
       new Chart(document.getElementById("topGamesChart"), {
@@ -85,6 +86,14 @@
             title: {
               display: true,
               text: "Top 5 jocuri după timp total"
+            },
+            tooltip: {
+              callbacks: {
+                title: function(context) {
+                  const index = context[0].dataIndex;
+                  return fullLabels[index];
+                }
+              }
             }
           }
         }
