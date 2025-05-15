@@ -1,0 +1,31 @@
+{
+  "hosting": {
+    "public": "public",
+    "ignore": [
+      "**/.*",
+      "**/node_modules/**",
+      "**/venv/**",
+      "**/__pycache__/**",
+      "**/*.sh",
+      "**/*.pyc",
+      "**/*.exe",
+      "**/*.bin",
+      "**/.mozilla/**",
+      "**/.cache/**",
+      "**/.vscode/**",
+      "**/.git/**",
+      "**/firebase.json"
+    ],
+    "headers": [
+      {
+        "source": "/platforms/**",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "max-age=86400"
+          }
+        ]
+      }
+    ]
+  }
+}
