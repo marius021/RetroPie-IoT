@@ -21,3 +21,4 @@ game_session = {
 doc_ref = db.collection('games_sessions').add(game_session)
 
 print(f'Datele au fost salvate in Firestore cu ID: {doc_ref[1].id}')
+
