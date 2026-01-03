@@ -37,10 +37,17 @@ Acest proiect a fost creat din dorința de a transforma un simplu Raspberry Pi c
 * *Opțional:* Bandă LED adresabilă
 
 
-## 💻 Cerințe Software
+## 💻 Software implementat
+•	RetroPie (platforma bazata pe Raspberry Pi OS, specializata in emularea jocurilor retro);
+•	Emulatori specifici integrati in RetroPie:
+o	PSX: lr-pcsx-rearmed
+o	PSP: ppsspp
+o	PS2: aethersx2
+•	Python pentru dezvoltarea scripturilor de monitorizare automata;
+•	Firebase Admin SDK (pentru găzduirea interfeței web interactive);
+•	HTML, CSS, JavaScript pentru dezvoltarea dashboard-ului web;
+•	Chart.js (pentru afișarea grafica interactiva a statisticilor).
 
-* RetroPie (ultima versiune stabilă)
-* Python 3
 
 
 ## 🚀 Instalare
