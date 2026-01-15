@@ -77,3 +77,8 @@ Editează fișierul de configurare `config.ini` (sau `settings.py`) pentru a set
 
 ```bash
 nano config.ini
+
+========== To Be Inplemented ========
+
+? Live Stream
+? alta platforma pentru comenzi in afara de google
